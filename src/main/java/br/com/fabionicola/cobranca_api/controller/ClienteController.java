@@ -4,6 +4,7 @@ import br.com.fabionicola.cobranca_api.model.Cliente;
 import br.com.fabionicola.cobranca_api.service.ClienteService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 
 import java.util.List;
@@ -19,7 +20,7 @@ public class ClienteController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Cliente criar(@RequestBody Cliente cliente){
+    public Cliente criar(@Valid @RequestBody Cliente cliente){
         return service.criar(cliente);
     }
 
@@ -34,7 +35,7 @@ public class ClienteController {
     }
 
     @PutMapping("/{id}")
-    public Cliente atualizar(@PathVariable Long id, @RequestBody Cliente cliente){
+    public Cliente atualizar(@PathVariable Long id, @Valid @RequestBody Cliente cliente){
         return service.atualizar(id, cliente);
     }
 
