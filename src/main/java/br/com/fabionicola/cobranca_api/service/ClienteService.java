@@ -1,5 +1,6 @@
 package br.com.fabionicola.cobranca_api.service;
 
+import br.com.fabionicola.cobranca_api.exception.ClienteNaoEncontradoException;
 import br.com.fabionicola.cobranca_api.model.Cliente;
 import br.com.fabionicola.cobranca_api.repository.ClienteRepository;
 import org.springframework.stereotype.Service;
@@ -26,7 +27,7 @@ public class ClienteService {
     }
 
     public Cliente buscarPorId(Long id){
-        return repository.findById(id).orElseThrow(() -> new RuntimeException("Cliente não encontrado: id= " + id));
+        return repository.findById(id).orElseThrow(() -> new ClienteNaoEncontradoException(id));
     }
 
     public Cliente atualizar(Long id, Cliente dados){
