@@ -1,6 +1,7 @@
 package br.com.fabionicola.cobranca_api.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -26,6 +27,7 @@ public class Cliente {
     private String documento;
 
     @NotBlank(message = "Email é obrigatório")
+    @Email(message = "Email inválido")
     @Column (nullable = false, unique = true, length = 20)
     private String email;
 
