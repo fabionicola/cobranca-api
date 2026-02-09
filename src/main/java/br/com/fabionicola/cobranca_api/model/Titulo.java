@@ -103,15 +103,4 @@ public class Titulo {
         this.pagoEm = pagoEm;
     }
 
-
-    /*
-    m e explique o pq de domain
-    explique enum - o que é? e para que serve no contexto usado
-    explique a entidade titulo linha por linha com um potugol (portugues / codigo)
-    @column gera uma tabela?
-    o que faz @generatevalue?
-    o que é essa instrução com @ antes das variaveis e intruções
-
-    */
-
 }
