@@ -12,7 +12,7 @@ import br.com.fabionicola.cobranca_api.service.TituloService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("./titulos")
+@RequestMapping("/titulos")
 public class TituloController {
     
     private final TituloService tituloService;
