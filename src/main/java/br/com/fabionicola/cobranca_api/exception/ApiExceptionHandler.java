@@ -1,6 +1,8 @@
 package br.com.fabionicola.cobranca_api.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolationException;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -32,6 +34,25 @@ public class ApiExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
     }
 
+    
+        @ExceptionHandler(TituloNaoEncontradoException.class)
+        public ResponseEntity<ApiError> handleTituloNaoEncontrado(
+                TituloNaoEncontradoException e,
+                HttpServletRequest request
+        ) {
+        ApiError body = new ApiError(
+                LocalDateTime.now().toString(),
+                HttpStatus.NOT_FOUND.value(),
+                "Título não encontrado",
+                e.getMessage(),
+                request.getRequestURI(),
+                request.getMethod(),
+                null
+        );
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
+        }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiError> handleValidacao(
             MethodArgumentNotValidException e,
@@ -54,4 +75,23 @@ public class ApiExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
     }
+    
+        @ExceptionHandler(ConstraintViolationException.class)
+        public ResponseEntity<ApiError> handleConstraintViolation(
+                ConstraintViolationException e,
+                HttpServletRequest request
+        ) {
+        ApiError body = new ApiError(
+                LocalDateTime.now().toString(),
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                e.getMessage(),
+                request.getRequestURI(),
+                request.getMethod(),
+                null
+        );
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+        }
+
 }
