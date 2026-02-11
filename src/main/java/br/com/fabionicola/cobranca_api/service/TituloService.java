@@ -4,8 +4,11 @@ import org.springframework.stereotype.Service;
 
 import br.com.fabionicola.cobranca_api.dto.TituloCreateRequest;
 import br.com.fabionicola.cobranca_api.dto.TituloResponse;
+import br.com.fabionicola.cobranca_api.dto.TituloUpdateRequest;
 import br.com.fabionicola.cobranca_api.exception.ClienteNaoEncontradoException;
+import br.com.fabionicola.cobranca_api.exception.TituloNaoEncontradoException;
 import br.com.fabionicola.cobranca_api.model.Cliente;
+import br.com.fabionicola.cobranca_api.model.StatusTitulo;
 import br.com.fabionicola.cobranca_api.model.Titulo;
 import br.com.fabionicola.cobranca_api.repository.ClienteRepository;
 import br.com.fabionicola.cobranca_api.repository.TituloRepository;
@@ -16,51 +19,49 @@ import java.util.stream.Collectors;
 @Service
 public class TituloService {
     private final TituloRepository tituloRepository;
-    private final ClienteRepository clienteRepository;
+    private final ClienteService clienteService;
     
-    public TituloService(TituloRepository tituloRepository, ClienteRepository clienteRepository){
+    public TituloService(TituloRepository tituloRepository, ClienteService clienteService){
         this.tituloRepository = tituloRepository;
-        this.clienteRepository = clienteRepository;
+        this.clienteService = clienteService;
     }
 
     public Titulo criar(TituloCreateRequest request){
-        Cliente cliente = clienteRepository.findById(request.getClienteId()).orElseThrow(() -> new ClienteNaoEncontradoException(request.getClienteId()));
+        Cliente cliente = clienteService.buscarPorId(request.getClienteId());
 
         Titulo titulo = new Titulo();
         titulo.setCliente(cliente);
         titulo.setValor(request.getValor());
         titulo.setVencimento(request.getVencimento());
         titulo.setDescricao(request.getDescricao());
+        titulo.setStatus(StatusTitulo.ABERTO);
         //status ja nasce ABERTO na entidade (default)
         //criadoEm via @Prepersist
 
         return tituloRepository.save(titulo);
     }
 
-    public TituloResponse toResponse(Titulo titulo){
-        TituloResponse resp = new TituloResponse();
-        resp.setId(titulo.getId());
-        resp.setClienteId(titulo.getCliente().getId());
-        resp.setValor(titulo.getValor());
-        resp.setVencimento(titulo.getVencimento());
-        resp.setDescricao(titulo.getDescricao());
-        resp.setStatus(titulo.getStatus());
-        resp.setCriadoEm(titulo.getCriadoEm());
-        resp.setPagoEm(titulo.getPagoEm());
-        return resp;
-    }
     
-    public List<TituloResponse> listarTodos() {
-        return tituloRepository.findAll()
-                .stream()
-                .map(this::toResponse)
-                .collect(Collectors.toList());
+    public List<Titulo> listar() {
+        return tituloRepository.findAll();
     }
 
-    public TituloResponse buscarPorId(Long id) {
-        Titulo titulo = tituloRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Título com ID " + id + " não encontrado"));
-        return toResponse(titulo);
+    public Titulo buscarPorId(Long id) {
+        return tituloRepository.findById(id)
+        .orElseThrow(() -> new TituloNaoEncontradoException(id));
+    }
+
+    public Titulo atualizar(Long id, TituloUpdateRequest request){
+        Titulo existente = buscarPorId(id);
+        existente.setValor(request.getValor());
+        existente.setVencimento(request.getVencimento());
+        existente.setDescricao(request.getDescricao());
+        return tituloRepository.save(existente);
+    }
+
+    public void deletar(Long id){
+        buscarPorId(id);
+        tituloRepository.deleteById(id);
     }
 
 }

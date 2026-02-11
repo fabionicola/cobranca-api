@@ -33,15 +33,24 @@ public class Titulo {
     @Column(name = "criado_em", nullable = false)
     private LocalDateTime criadoEm;
 
+    @Column(name = "atualizado_em", nullable = false)
+    private LocalDateTime atualizadoEm;
+
     @Column(name = "pago_em")
     private LocalDateTime pagoEm;
 
     @PrePersist
     public void prePersist(){
         this.criadoEm = LocalDateTime.now();
+        this.atualizadoEm = this.criadoEm;
         if (this.status == null){
             this.status = StatusTitulo.ABERTO;
         }
+    }
+
+    @PreUpdate
+    public void preUpdate(){
+        this.atualizadoEm = LocalDateTime.now();
     }
 
     //Getters e Setters
