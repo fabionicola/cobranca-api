@@ -13,6 +13,8 @@ import br.com.fabionicola.cobranca_api.model.Titulo;
 import br.com.fabionicola.cobranca_api.repository.ClienteRepository;
 import br.com.fabionicola.cobranca_api.repository.TituloRepository;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -64,4 +66,23 @@ public class TituloService {
         tituloRepository.deleteById(id);
     }
 
+        public Titulo pagar(Long id){
+            Titulo titulo = buscarPorId(id);
+
+            if (titulo.getStatus() != StatusTitulo.PAGO) {
+                titulo.setStatus(StatusTitulo.PAGO);
+                if (titulo.getPagoEm() == null) {
+                    titulo.setPagoEm(LocalDateTime.now());
+                }
+                //@PreUpdater cuidara do atualizadoEm
+                titulo = tituloRepository.save(titulo);
+            }
+            return titulo;
+        }
+
+        public List<Titulo> listarAtrasados(){
+            LocalDate hoje = LocalDate.now();
+            return tituloRepository.findByStatusAndVencimentoBefore(StatusTitulo.ABERTO, hoje);
+        }
+        
 }
