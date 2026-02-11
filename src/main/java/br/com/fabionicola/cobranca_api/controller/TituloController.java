@@ -16,6 +16,9 @@ import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 
 @RestController
@@ -58,6 +61,20 @@ public class TituloController {
     public void deletar(@PathVariable Long id){
         tituloService.deletar(id);
     }
+
+    @PutMapping("/{id}/pagar")
+    public TituloResponse pagar(@PathVariable Long id) {
+        return toResponse(tituloService.pagar(id));
+    }
+
+    @GetMapping("/atrasados")
+    public List<TituloResponse> listarAtrasados() {
+        return tituloService.listarAtrasados()
+        .stream()
+        .map(this::toResponse)
+        .collect(Collectors.toList());
+    }
+    
 
     private TituloResponse toResponse(Titulo t){
         TituloResponse dto = new TituloResponse();
